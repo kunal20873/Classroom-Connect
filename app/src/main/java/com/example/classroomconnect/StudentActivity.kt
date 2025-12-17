@@ -1,4 +1,6 @@
 package com.example.classroomconnect
+
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -41,6 +43,14 @@ class StudentActivity : AppCompatActivity() {
         classArrayList=ArrayList()
         myAdapter= StudentAdapter(classArrayList,this)
      binding.rcViewStudent.adapter=myAdapter
+        myAdapter.setOnItemClickListener(object : StudentAdapter.onItemClickListener
+        {
+            override fun onItemClick(position: Int) {
+                val intent = Intent(this@StudentActivity, ClassDetailActivity::class.java)
+                intent.putExtra("ClassId",classArrayList[position].classId)
+                startActivity(intent)
+            }
+        })
         loadClass()
 
           val name = intent.getStringExtra(MainActivity.KEY1)

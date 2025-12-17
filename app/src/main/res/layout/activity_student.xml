@@ -26,6 +26,8 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:background="#F2F6FF"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
         android:layout_marginTop="19dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

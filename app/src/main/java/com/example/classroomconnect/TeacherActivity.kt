@@ -1,13 +1,11 @@
 package com.example.classroomconnect
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import android.view.View.OnClickListener
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.classroomconnect.databinding.ActivityMainBinding
 import com.example.classroomconnect.databinding.ActivityTeacherBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -17,6 +15,8 @@ import com.google.firebase.database.DatabaseError
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.database.DataSnapshot
+
+
 
 class TeacherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTeacherBinding
@@ -36,6 +36,14 @@ class TeacherActivity : AppCompatActivity() {
         classArrayList= ArrayList()
           myAdapter= TeacherAdapter(classArrayList,this)
         binding.rcViewTeacher.adapter=myAdapter
+        myAdapter.setOnItemClickListener(object : TeacherAdapter.onItemClickListener{
+            override fun onItemClick(position: Int){
+                val intent= Intent(applicationContext, ClassDetailActivity::class.java)
+
+                intent.putExtra("ClassId",classArrayList[position].classId)
+               startActivity(intent)
+            }
+        })
         loadClasses()
         val name = intent.getStringExtra(MainActivity.KEY1)
         binding.view1.text = "Welcome $name "
