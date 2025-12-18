@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.classroomconnect.MaterialAdapter.MyViewHolder
-
-class MaterialAdapter(var materialList: ArrayList<Material>, var context: Activity) :
+import android.util.Log
+class MaterialAdapter(var materialList: ArrayList<Material>, var context: Activity ,
+    var onDeleteClick : (Material)-> Unit) :
 RecyclerView.Adapter<MaterialAdapter.MyViewHolder>(){
     class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val MaterialNAME=itemView.findViewById<TextView>(R.id.tvEach1)
@@ -30,6 +31,11 @@ RecyclerView.Adapter<MaterialAdapter.MyViewHolder>(){
         var x= currentItem.link
         holder.MaterialNAME.text =currentItem.topic
         holder.materialLink.text=" Link : $x"
+        holder.itemView.setOnLongClickListener {
+            android.util.Log.d("CLICK_TEST","Long click pressed!")
+            onDeleteClick(currentItem)
+            true
+        }
     }
 
     override fun getItemCount(): Int {

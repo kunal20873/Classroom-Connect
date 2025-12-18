@@ -27,6 +27,9 @@
         android:layout_height="200dp"
         android:background="#F2F6FF"
         android:layout_marginTop="19dp"
+        android:layout_margin="10dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view1" >

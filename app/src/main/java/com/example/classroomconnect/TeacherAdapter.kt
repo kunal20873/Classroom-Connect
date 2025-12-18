@@ -43,7 +43,7 @@ private lateinit var myListener:onItemClickListener
 
     }
 
-    override fun onBindViewHolder(holder: TeacherAdapter.MyViewHolder, position: Int) {
+    override fun onBindViewHolder(holder:MyViewHolder, position: Int) {
      val currentItem = classArrayList[position]
         var x=currentItem.topic
         var y=currentItem.classId

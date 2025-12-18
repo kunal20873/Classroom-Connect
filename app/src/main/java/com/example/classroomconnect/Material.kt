@@ -1,4 +1,6 @@
 package com.example.classroomconnect
 
-data class Material(val topic : String?="" ,val link : String?=""){
+
+
+data class Material(var materialId: String? = "", var topic : String?="", var link : String?=""){
 }
