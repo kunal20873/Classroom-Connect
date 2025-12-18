@@ -145,7 +145,7 @@ checkRoleandUpdateUi()
             }
         }
 
-    } b
+    } 
     private fun fetchTeacherName(uid: String){
         val dataREF= FirebaseDatabase.getInstance().getReference("Users")
         dataREF.child(uid).get().addOnSuccessListener { snapshot ->
