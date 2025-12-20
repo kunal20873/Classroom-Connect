@@ -1,14 +1,12 @@
 package com.example.classroomconnect
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+
 import com.example.classroomconnect.databinding.ActivityClassDetailBinding
-import com.example.classroomconnect.databinding.ActivityMainBinding
+
 import com.google.firebase.database.DataSnapshot
 import android.util.Log
 import android.view.View
@@ -17,7 +15,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 
 class ClassDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityClassDetailBinding
@@ -25,14 +22,18 @@ class ClassDetailActivity : AppCompatActivity() {
     private lateinit var myAdapter: MaterialAdapter
     private lateinit var classcode: String
     private lateinit var role : String
-    private  var classTeacherUid : String =""
+    private lateinit var CLASSNAME : String
+    private lateinit var classTeacherUid : String
+    private  lateinit var currentUserId : String
+    private lateinit var techerNAME : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClassDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
-         classcode = intent.getStringExtra("ClassId") ?:run{
+        classcode = intent.getStringExtra("ClassId") ?:run{
             Toast.makeText(this,"Class not found ", Toast.LENGTH_SHORT).show()
             finish()
             return
@@ -42,7 +43,7 @@ class ClassDetailActivity : AppCompatActivity() {
         materialList= ArrayList()
         binding.rcViewMaterial.layoutManager= LinearLayoutManager(this)
         myAdapter= MaterialAdapter(materialList,this){ selectedMaterial ->
-            val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
+            currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
             if(currentUserId!=null&&currentUserId==classTeacherUid){
                 showDeleteDialog(selectedMaterial)
@@ -57,8 +58,8 @@ class ClassDetailActivity : AppCompatActivity() {
 
         val dataRef = FirebaseDatabase.getInstance().getReference("Classes")
         dataRef.child(classcode).get().addOnSuccessListener { snapshot ->
-            val CLASSNAME = snapshot.child("topic").value.toString()
-             classTeacherUid = snapshot.child("uid").value.toString()
+            CLASSNAME = snapshot.child("topic").value.toString()
+            classTeacherUid = snapshot.child("uid").value.toString()
             binding.topicname.text = " Topic : $CLASSNAME"
             fetchTeacherName(classTeacherUid)
 
@@ -72,19 +73,22 @@ class ClassDetailActivity : AppCompatActivity() {
             val materialId=ref.key!!
             val classOfMetarial = Material(materialId,MATERIAl,LINK)
             ref.setValue(classOfMetarial).addOnSuccessListener {
-                    Toast.makeText(this, "Material added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Material added successfully", Toast.LENGTH_SHORT).show()
 
-                }.addOnFailureListener {
-                    Toast.makeText(this, "Material upload failed,try again", Toast.LENGTH_SHORT).show()
-                }
+            }.addOnFailureListener {
+                Toast.makeText(this, "Material upload failed,try again", Toast.LENGTH_SHORT).show()
+            }
         }
-checkRoleandUpdateUi()
+        checkRoleandUpdateUi()
+        binding.btnDoubt.setOnClickListener {
+            openDoubtForum()
+        }
     }
     private fun checkRoleandUpdateUi(){
         val uid= FirebaseAuth.getInstance().currentUser!!.uid
         FirebaseDatabase.getInstance().getReference("Users").child(uid).child("role")
             .get().addOnSuccessListener { snapshot ->
-                 role = snapshot.value.toString()
+                role = snapshot.value.toString()
                 if(role=="Student"){
                     binding.cardAddMaterial.visibility= View.GONE
                 }
@@ -145,14 +149,21 @@ checkRoleandUpdateUi()
             }
         }
 
-    } b
+    }
     private fun fetchTeacherName(uid: String){
         val dataREF= FirebaseDatabase.getInstance().getReference("Users")
         dataREF.child(uid).get().addOnSuccessListener { snapshot ->
-            val techerNAME = snapshot.child("name").value.toString()
+            techerNAME = snapshot.child("name").value.toString()
             binding.teacherName.text="Created by : $techerNAME"
 
         }
+    }
+    private fun openDoubtForum(){
+        val intent = Intent(this, DiscussionForum::class.java)
+        intent.putExtra("ClassTopic",CLASSNAME)
+        intent.putExtra("TeacherName",techerNAME)
+        intent.putExtra("ClassCode",classcode)
+        startActivity(intent)
     }
 
 }
