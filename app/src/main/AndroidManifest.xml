@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ClassroomConnect">
         <activity
+            android:name=".DiscussionForum"
+            android:exported="false" />
+        <activity
             android:name=".ClassDetailActivity"
             android:exported="false" />
         <activity

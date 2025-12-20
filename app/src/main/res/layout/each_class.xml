@@ -21,11 +21,11 @@
             android:id="@+id/tEach1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
             android:layout_margin="10dp"
+            android:text="TextView"
+            android:textSize="20dp"
 
-            android:text="TextView" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tEach2"
