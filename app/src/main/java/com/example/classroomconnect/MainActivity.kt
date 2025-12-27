@@ -1,6 +1,8 @@
 package com.example.classroomconnect
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -22,56 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private   fun redirectByRole(){
-        val uid = FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseDatabase.getInstance().getReference("Users").child(uid).child("role").get()
-            .addOnSuccessListener { snapshot ->
-                val role = snapshot.value?.toString()?.trim()?.lowercase()
-              if(role=="student"){
-                  databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                  databaseReference.child(uid).get().addOnSuccessListener {
-                      if(it.exists()){
-                          val name =it.child("name").value
-                           val intent=Intent(this, StudentActivity::class.java)
-                          intent.putExtra(KEY1,name.toString())
-                          startActivity(intent)
-                      }
-                      else {
-                          Toast.makeText(this,"Error , try again ",Toast.LENGTH_SHORT).show()
-                      }
-                  }
 
-              }
-                else if (role=="teacher"){
-                  databaseReference = FirebaseDatabase.getInstance().getReference("Users")
-                  databaseReference.child(uid).get().addOnSuccessListener {
-                      if(it.exists()){
-                          val name =it.child("name").value
-                          val intent=Intent(this, TeacherActivity::class.java)
-                          intent.putExtra(KEY1,name.toString())
-                          startActivity(intent)
-                      }
-                      else {
-                          Toast.makeText(this,"Error , try again ",Toast.LENGTH_SHORT).show()
-                      }
-                  }
-              }
-                else {
-                  Toast.makeText(this,"Invalid Role", Toast.LENGTH_SHORT).show()
-              }
-            }.addOnFailureListener {
-                Toast.makeText(this,"Failed try again ",Toast.LENGTH_SHORT).show()
-            }
-    }
-    private fun openStudentHome(){
-
-        val intent=Intent(this, StudentActivity::class.java)
-        startActivity(intent)
-    }
-    private fun openTeacherHome(){
-        val intent = Intent(this, TeacherActivity::class.java)
-        startActivity(intent)
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -79,6 +32,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth= FirebaseAuth.getInstance()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    1001
+                )
+            }
+        }
         binding.btnLogin.setOnClickListener {
             val email=binding.etEmail.text.toString()
             val password=binding.etPassword.text.toString()
@@ -101,10 +64,64 @@ class MainActivity : AppCompatActivity() {
 
         }
 
+
         binding.tvRegister.setOnClickListener {
             val intent = Intent(this, SignUp::class.java)
             startActivity(intent)
         }
 
+    }
+    override fun onStart() {
+        super.onStart()
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            redirectByRole()
+        }
+    }
+    private   fun redirectByRole(){
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        FirebaseDatabase.getInstance().getReference("Users").child(uid).child("role").get()
+            .addOnSuccessListener { snapshot ->
+                val role = snapshot.value?.toString()?.trim()?.lowercase()
+                if(role=="student"){
+                    databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                    databaseReference.child(uid).get().addOnSuccessListener {
+                        if(it.exists()){
+                            val name =it.child("name").value
+                            val i=Intent(this, StudentActivity::class.java)
+                            i.putExtra(KEY1,name.toString())
+                            i.addFlags(  Intent.FLAG_ACTIVITY_NEW_TASK or
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+                            startActivity(i)
+                        }
+                        else {
+                            Toast.makeText(this,"Error , try again ",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                }
+                else if (role=="teacher"){
+                    databaseReference = FirebaseDatabase.getInstance().getReference("Users")
+                    databaseReference.child(uid).get().addOnSuccessListener {
+                        if(it.exists()){
+                            val name =it.child("name").value
+                            val i=Intent(this, TeacherActivity::class.java)
+                            i.putExtra(KEY1,name.toString())
+                            i.addFlags(  Intent.FLAG_ACTIVITY_NEW_TASK or
+                                    Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            startActivity(i)
+                        }
+                        else {
+                            Toast.makeText(this,"Error , try again ",Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                else {
+                    Toast.makeText(this,"Invalid Role", Toast.LENGTH_SHORT).show()
+                }
+            }.addOnFailureListener {
+                Toast.makeText(this,"Failed try again ",Toast.LENGTH_SHORT).show()
+            }
     }
 }

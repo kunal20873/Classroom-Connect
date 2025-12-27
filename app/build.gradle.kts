@@ -50,6 +50,7 @@ dependencies {
     implementation(libs.androidx.cardview)
     implementation(libs.firebase.database)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.firebase.messaging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

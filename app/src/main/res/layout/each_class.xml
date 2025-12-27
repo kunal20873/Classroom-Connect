@@ -2,10 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardElevation="5dp"
     app:cardCornerRadius="20dp"
-    android:background="#F2F6FF"
+    app:cardBackgroundColor="?attr/colorSurface"
     android:layout_margin="9dp"
     android:id="@+id/cardItem"
     >
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="TextView"
-            android:textSize="20dp"
+            android:textSize="20sp"
 
             android:textStyle="bold" />
 
@@ -31,9 +32,9 @@
             android:id="@+id/tEach2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:layout_margin="10dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:text="TextView" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -1,22 +1,19 @@
 package com.example.classroomconnect
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.classroomconnect.databinding.ActivityMainBinding
 import com.example.classroomconnect.databinding.ActivityStudentBinding
+import com.example.classroomconnect.databinding.DrawerLayoutBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 
 class StudentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudentBinding
@@ -24,14 +21,39 @@ class StudentActivity : AppCompatActivity() {
     private lateinit var classArrayList: ArrayList<MODEL>
     private lateinit var database: FirebaseDatabase
     private lateinit var valueEventListener: ValueEventListener
+    private lateinit var drawerBinding: DrawerLayoutBinding
     private lateinit var uid: String
-
     private lateinit var myAdapter: StudentAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
        binding= ActivityStudentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-      val  currentUser= FirebaseAuth.getInstance().currentUser
+       drawerBinding = binding.drawer
+        binding.btnMenu1.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+        drawerBinding.btnLogout.setOnClickListener {
+
+            val builder=android.app.AlertDialog.Builder(this)
+            builder.setTitle("Log Out ")
+            builder.setMessage("Are you sure ? , you want to log out")
+            builder.setPositiveButton("Yes , Logout "){ dialog, which ->
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+
+            }
+            builder.setNegativeButton("No "){dialog, which ->
+                dialog.dismiss()
+
+            }
+            val alert=builder.create()
+            alert.show()
+        }
+        val currentUser= FirebaseAuth.getInstance().currentUser
         if(currentUser==null){
             Toast.makeText(this,"Login first", Toast.LENGTH_SHORT).show()
             finish()
@@ -42,17 +64,18 @@ class StudentActivity : AppCompatActivity() {
         binding.rcViewStudent.layoutManager= LinearLayoutManager(this)
         classArrayList=ArrayList()
         myAdapter= StudentAdapter(classArrayList,this)
-     binding.rcViewStudent.adapter=myAdapter
+        binding.rcViewStudent.adapter=myAdapter
         myAdapter.setOnItemClickListener(object : StudentAdapter.onItemClickListener
         {
             override fun onItemClick(position: Int) {
                 val intent = Intent(this@StudentActivity, ClassDetailActivity::class.java)
+
                 intent.putExtra("ClassId",classArrayList[position].classId)
                 startActivity(intent)
             }
         })
         loadClass()
-
+        sendData()
           val name = intent.getStringExtra(MainActivity.KEY1)
           binding.studName.text= "Welcome $name "
 
@@ -76,7 +99,10 @@ class StudentActivity : AppCompatActivity() {
                 }
             }
         }
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            FirebaseDatabase.getInstance().getReference("Users").child(uid).child("fcmToken").setValue(token)
 
+        }
     }
     private fun joinClass(classId: String){
 
@@ -117,4 +143,18 @@ class StudentActivity : AppCompatActivity() {
 
         })
 }
+    private fun sendData(){
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        FirebaseDatabase.getInstance()
+            .getReference("Users")
+            .child(uid)
+            .get()
+            .addOnSuccessListener { snapshot ->
+               val USERNAME = snapshot.child("name").value.toString()
+            val USEREMAIL = snapshot.child("email").value.toString()
+                drawerBinding.tvUserName.text="Name : $USERNAME"
+                drawerBinding.tvUserEmail.text="Gmail : $USEREMAIL"
+            }
+    }
 }

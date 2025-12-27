@@ -6,6 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="#F2F6FF"
     tools:context=".DiscussionForum">
 
@@ -13,17 +14,16 @@
         android:id="@+id/ClassInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-
+        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/doubtContainer"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginStart="116dp"
+        android:textColor="#000000"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="251dp"
         android:text="Discussion Forum"
@@ -95,9 +96,9 @@
         android:layout_height="wrap_content"
         android:id="@+id/textInput"
         app:layout_constraintBottom_toBottomOf="parent"
-
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="30dp"
         app:layout_constraintEnd_toStartOf="@+id/btnSend"
         >
 
@@ -105,8 +106,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:textColor="#000000"
             android:id="@+id/etMessage"
-            android:layout_marginBottom="30dp"
             android:hint="Enter message "
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -115,7 +116,7 @@
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="1dp"
         android:backgroundTint="#5A6CFF"
         android:text="Send"
 

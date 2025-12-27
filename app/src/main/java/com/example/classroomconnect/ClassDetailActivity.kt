@@ -1,8 +1,14 @@
 package com.example.classroomconnect
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
 import com.example.classroomconnect.databinding.ActivityClassDetailBinding
@@ -10,8 +16,10 @@ import com.example.classroomconnect.databinding.ActivityClassDetailBinding
 import com.google.firebase.database.DataSnapshot
 import android.util.Log
 import android.view.View
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
@@ -23,6 +31,8 @@ class ClassDetailActivity : AppCompatActivity() {
     private lateinit var classcode: String
     private lateinit var role : String
     private lateinit var CLASSNAME : String
+
+    private var isInitialLoad = true
     private lateinit var classTeacherUid : String
     private  lateinit var currentUserId : String
     private lateinit var techerNAME : String
@@ -38,13 +48,17 @@ class ClassDetailActivity : AppCompatActivity() {
             finish()
             return
         }
-
+         currentUserId= FirebaseAuth.getInstance().currentUser?.uid.toString()
+        FirebaseDatabase.getInstance().getReference("Users").child(currentUserId).child("role")
+            .get().addOnSuccessListener { snapshot ->
+                role = snapshot.value.toString()
+                checkRoleandUpdateUi()
+            }
         binding.classCode.text = "Class ID : ${classcode}"
         materialList= ArrayList()
         binding.rcViewMaterial.layoutManager= LinearLayoutManager(this)
         myAdapter= MaterialAdapter(materialList,this){ selectedMaterial ->
-            currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
-
+            currentUserId
             if(currentUserId!=null&&currentUserId==classTeacherUid){
                 showDeleteDialog(selectedMaterial)
             } else {
@@ -79,23 +93,55 @@ class ClassDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Material upload failed,try again", Toast.LENGTH_SHORT).show()
             }
         }
-        checkRoleandUpdateUi()
+
+
         binding.btnDoubt.setOnClickListener {
             openDoubtForum()
         }
     }
+    private fun listenForNewMaterial(classcode: String){
+        val materialRef = FirebaseDatabase.getInstance().getReference("Classes").child(classcode).child("Material")
+        materialRef.addChildEventListener(object : ChildEventListener{
+            override fun onChildAdded(
+                snapshot: DataSnapshot,
+                previousChildName: String?
+            ) {
+                if (isInitialLoad) return
+                val topic = snapshot.child("topic").value?.toString()?:"New Material"
+                val message="$topic\n Class  : $CLASSNAME ($classcode)"
+                showNotificationFunction("New material added",message,classcode)
+
+            }
+
+            override fun onChildChanged(
+                snapshot: DataSnapshot,
+                previousChildName: String?
+            ) {}
+
+            override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+            override fun onChildMoved(
+                snapshot: DataSnapshot,
+                previousChildName: String?
+            ) {}
+
+            override fun onCancelled(error: DatabaseError) {}
+
+        })
+        materialRef.get().addOnSuccessListener {
+            isInitialLoad = false
+        }
+    }
     private fun checkRoleandUpdateUi(){
-        val uid= FirebaseAuth.getInstance().currentUser!!.uid
-        FirebaseDatabase.getInstance().getReference("Users").child(uid).child("role")
-            .get().addOnSuccessListener { snapshot ->
-                role = snapshot.value.toString()
+
                 if(role=="Student"){
                     binding.cardAddMaterial.visibility= View.GONE
+                    listenForNewMaterial(classcode)
                 }
                 else{
                     binding.cardAddMaterial.visibility= View.VISIBLE
                 }
-            }
+
     }
     private fun loadMaterial(){
         val materialRef= FirebaseDatabase.getInstance().getReference("Classes").child(classcode).child("Material")
@@ -150,6 +196,38 @@ class ClassDetailActivity : AppCompatActivity() {
         }
 
     }
+    private fun showNotificationFunction(title : String , message:String , classCode : String){
+        val channelId="material_channel"
+        val intent = Intent(this, ClassDetailActivity::class.java).apply {
+            putExtra("ClassId",classCode)
+
+
+        }
+        val pendingIntent= PendingIntent.getActivity(this,classcode.hashCode(),intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )
+
+        val manager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+           val channel = NotificationChannel(channelId,"Material Updates",
+               NotificationManager.IMPORTANCE_HIGH)
+            manager.createNotificationChannel(channel)
+        }
+        val notification= NotificationCompat.Builder(this,channelId)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(message)
+            )
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
+            .build()
+        manager.notify(System.currentTimeMillis().toInt(),notification)
+    }
+
+
+
     private fun fetchTeacherName(uid: String){
         val dataREF= FirebaseDatabase.getInstance().getReference("Users")
         dataREF.child(uid).get().addOnSuccessListener { snapshot ->
@@ -160,6 +238,7 @@ class ClassDetailActivity : AppCompatActivity() {
     }
     private fun openDoubtForum(){
         val intent = Intent(this, DiscussionForum::class.java)
+
         intent.putExtra("ClassTopic",CLASSNAME)
         intent.putExtra("TeacherName",techerNAME)
         intent.putExtra("ClassCode",classcode)
@@ -167,3 +246,4 @@ class ClassDetailActivity : AppCompatActivity() {
     }
 
 }
+

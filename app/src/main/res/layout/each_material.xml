@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardElevation="5dp"
     app:cardCornerRadius="20dp"
+    app:cardBackgroundColor="?attr/colorSurface"
     android:layout_margin="9dp"
     android:id="@+id/cardItem"
     >
@@ -30,11 +31,9 @@
             android:id="@+id/tvEach2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
             android:maxLines="1"
             android:ellipsize="end"
             android:clickable="true"
-
             android:autoLink="web"
             android:layout_margin="10dp"
             android:textSize="20sp"

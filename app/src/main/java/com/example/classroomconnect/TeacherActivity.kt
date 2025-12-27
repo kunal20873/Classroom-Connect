@@ -3,8 +3,6 @@ package com.example.classroomconnect
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import android.view.View.OnClickListener
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.example.classroomconnect.databinding.ActivityTeacherBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -13,7 +11,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
 import android.util.Log
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.classroomconnect.databinding.DrawerLayoutBinding
 import com.google.firebase.database.DataSnapshot
 
 
@@ -24,6 +24,7 @@ class TeacherActivity : AppCompatActivity() {
     private  lateinit var classArrayList: ArrayList<MODEL>
 
     private lateinit var valueEventListener: ValueEventListener
+    private lateinit var drawerBinding: DrawerLayoutBinding
     private lateinit var uid : String
     private lateinit var myAdapter: TeacherAdapter
 
@@ -31,6 +32,30 @@ class TeacherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTeacherBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        drawerBinding=binding.drawer
+        binding.btnMenu1.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+        drawerBinding.btnLogout.setOnClickListener {
+            val builder=android.app.AlertDialog.Builder(this)
+            builder.setTitle("Log Out ")
+            builder.setMessage("Are you sure ? , you want to log out")
+            builder.setPositiveButton("Yes , Logout "){ dialog, which ->
+                FirebaseAuth.getInstance().signOut()
+                val intent = Intent(this, MainActivity::class.java)
+                intent.flags =
+                    Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+
+            }
+            builder.setNegativeButton("No "){dialog, which ->
+                dialog.dismiss()
+
+            }
+            val alert=builder.create()
+            alert.show()
+        }
         uid = FirebaseAuth.getInstance().currentUser!!.uid
         binding.rcViewTeacher.layoutManager = LinearLayoutManager(this)
         classArrayList= ArrayList()
@@ -45,6 +70,7 @@ class TeacherActivity : AppCompatActivity() {
             }
         })
         loadClasses()
+        sendData()
         val name = intent.getStringExtra(MainActivity.KEY1)
         binding.view1.text = "Welcome $name "
         binding.btnClass.setOnClickListener {
@@ -107,6 +133,20 @@ class TeacherActivity : AppCompatActivity() {
                     .show()
             }
         })
+    }
+    private fun sendData(){
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+        FirebaseDatabase.getInstance()
+            .getReference("Users")
+            .child(uid)
+            .get()
+            .addOnSuccessListener { snapshot ->
+                val USERNAME = snapshot.child("name").value.toString()
+                val USEREMAIL = snapshot.child("email").value.toString()
+                drawerBinding.tvUserName.text="Name : $USERNAME"
+                drawerBinding.tvUserEmail.text="Gmail : $USEREMAIL"
+            }
     }
     private fun generateClassId(): String {
         val chars = "QWERTYUIOPASDFGHJKLZXCVBNM7894561230"

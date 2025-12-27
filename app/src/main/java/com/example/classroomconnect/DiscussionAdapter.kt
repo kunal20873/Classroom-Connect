@@ -9,7 +9,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.util.ArrayList
 
-class DiscussionAdapter(var messageList: ArrayList<Discussion>, var context: Activity) :
+class DiscussionAdapter(var messageList: ArrayList<Discussion>, var context: Activity,
+    var onDeleteClick : (Discussion)-> Unit
+    ) :
 RecyclerView.Adapter<DiscussionAdapter.MyViewHolder>(){
     class MyViewHolder(itemView: View):
     RecyclerView.ViewHolder(itemView){
@@ -30,6 +32,11 @@ RecyclerView.Adapter<DiscussionAdapter.MyViewHolder>(){
         val currentItem=messageList[position]
         holder.senderName.text=currentItem.userNAME
         holder.message.text=currentItem.message
+        holder.itemView.setOnLongClickListener {
+            android.util.Log.d("CLICK_TEST","Long click pressed!")
+            onDeleteClick(currentItem)
+            true
+        }
 
     }
 
