@@ -48,7 +48,7 @@ class ClassDetailActivity : AppCompatActivity() {
             finish()
             return
         }
-         currentUserId= FirebaseAuth.getInstance().currentUser?.uid.toString()
+        currentUserId= FirebaseAuth.getInstance().currentUser?.uid.toString()
         FirebaseDatabase.getInstance().getReference("Users").child(currentUserId).child("role")
             .get().addOnSuccessListener { snapshot ->
                 role = snapshot.value.toString()
@@ -134,13 +134,13 @@ class ClassDetailActivity : AppCompatActivity() {
     }
     private fun checkRoleandUpdateUi(){
 
-                if(role=="Student"){
-                    binding.cardAddMaterial.visibility= View.GONE
-                    listenForNewMaterial(classcode)
-                }
-                else{
-                    binding.cardAddMaterial.visibility= View.VISIBLE
-                }
+        if(role=="Student"){
+            binding.cardAddMaterial.visibility= View.GONE
+            listenForNewMaterial(classcode)
+        }
+        else{
+            binding.cardAddMaterial.visibility= View.VISIBLE
+        }
 
     }
     private fun loadMaterial(){
@@ -171,8 +171,8 @@ class ClassDetailActivity : AppCompatActivity() {
     private fun showDeleteDialog(material: Material){
         val builder=android.app.AlertDialog.Builder(this)
         builder.setTitle("Delete material")
-        builder.setMessage("Are you sure , you want to delete this material")
-        builder.setPositiveButton("Yes , Delete "){ dialog, which ->
+        builder.setMessage("Are you sure? You want to delete this material")
+        builder.setPositiveButton("Yes Delete "){ dialog, which ->
             deleteMaterialFromFirebase(material)
 
         }
@@ -209,8 +209,8 @@ class ClassDetailActivity : AppCompatActivity() {
         val manager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-           val channel = NotificationChannel(channelId,"Material Updates",
-               NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(channelId,"Material Updates",
+                NotificationManager.IMPORTANCE_HIGH)
             manager.createNotificationChannel(channel)
         }
         val notification= NotificationCompat.Builder(this,channelId)
@@ -246,4 +246,3 @@ class ClassDetailActivity : AppCompatActivity() {
     }
 
 }
-

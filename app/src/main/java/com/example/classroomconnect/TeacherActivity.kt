@@ -11,11 +11,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
 import android.util.Log
+import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.classroomconnect.databinding.DrawerLayoutBinding
 import com.google.firebase.database.DataSnapshot
-
+import java.security.KeyStore
 
 
 class TeacherActivity : AppCompatActivity() {
@@ -40,7 +41,7 @@ class TeacherActivity : AppCompatActivity() {
             val builder=android.app.AlertDialog.Builder(this)
             builder.setTitle("Log Out ")
             builder.setMessage("Are you sure ? , you want to log out")
-            builder.setPositiveButton("Yes , Logout "){ dialog, which ->
+            builder.setPositiveButton("Yes Logout "){ dialog, which ->
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags =
@@ -116,16 +117,32 @@ class TeacherActivity : AppCompatActivity() {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 classArrayList.clear()
+
+                if (!snapshot.exists()) {
+                    binding.tvNoClassCreated.visibility = View.VISIBLE
+                    binding.rcViewTeacher.visibility = View.GONE
+                    myAdapter.notifyDataSetChanged()
+                    return
+                }
+                var foundClass = false
                 for (classSnap in snapshot.children) {
                     val model = classSnap.getValue(MODEL::class.java)
+                    val classId = classSnap.key ?: continue
                     if (model != null && model.uid == uid) {
-                        model.classId = classSnap.key!!
+                        model.classId = classId
                         classArrayList.add(model)
+                        foundClass = true
                     }
                 }
-                Log.d("Class_List_size", classArrayList.size.toString())
+                    if(foundClass){
+                        binding.rcViewTeacher.visibility=View.VISIBLE
+                        binding.tvNoClassCreated.visibility= View.GONE
+                    }
+                    else{
+                        binding.tvNoClassCreated.visibility= View.VISIBLE
+                        binding.rcViewTeacher.visibility= View.GONE
+                    }
                 myAdapter.notifyDataSetChanged()
-
             }
 
             override fun onCancelled(error: DatabaseError) {

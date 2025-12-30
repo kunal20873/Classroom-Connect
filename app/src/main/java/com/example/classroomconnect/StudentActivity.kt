@@ -12,8 +12,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
+import android.view.View
 
 class StudentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudentBinding
@@ -36,8 +38,8 @@ class StudentActivity : AppCompatActivity() {
 
             val builder=android.app.AlertDialog.Builder(this)
             builder.setTitle("Log Out ")
-            builder.setMessage("Are you sure ? , you want to log out")
-            builder.setPositiveButton("Yes , Logout "){ dialog, which ->
+            builder.setMessage("Are you sure ? You want to log out")
+            builder.setPositiveButton("Yes Logout "){ dialog, which ->
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)
                 intent.flags =
@@ -48,7 +50,6 @@ class StudentActivity : AppCompatActivity() {
             }
             builder.setNegativeButton("No "){dialog, which ->
                 dialog.dismiss()
-
             }
             val alert=builder.create()
             alert.show()
@@ -121,19 +122,41 @@ class StudentActivity : AppCompatActivity() {
 
             override fun onDataChange(snapshot: DataSnapshot) {
                 classArrayList.clear()
-                for (classSnap in snapshot.children) {
-                   val classId=classSnap.key?:continue
-                    FirebaseDatabase.getInstance().getReference("Classes").child(classId).get().addOnSuccessListener { classData ->
-                        val model=classData.getValue(MODEL::class.java)
-                        if(model!=null){
-                            model.classId=classId
-                            classArrayList.add(model)
-                            myAdapter.notifyDataSetChanged()
-                        }
 
-                    }
+                if (!snapshot.exists()) {
+                    binding.tvNoClass.visibility = View.VISIBLE
+                    binding.rcViewStudent.visibility = View.GONE
+                    myAdapter.notifyDataSetChanged()
+                    return
                 }
+                val totalClasses = snapshot.childrenCount.toInt()
+                var loadedCount = 0
+                for (classSnap in snapshot.children) {
+                    val classId = classSnap.key ?: continue
+                    FirebaseDatabase.getInstance()
+                        .getReference("Classes")
+                        .child(classId)
+                        .get()
+                        .addOnSuccessListener { classData ->
+                            val model = classData.getValue(MODEL::class.java)
+                            if (model != null) {
+                                model.classId = classId
+                                classArrayList.add(model)
+                            }
 
+                            loadedCount++
+                            if (loadedCount == totalClasses) {
+                                if (classArrayList.isEmpty()) {
+                                    binding.tvNoClass.visibility = View.VISIBLE
+                                    binding.rcViewStudent.visibility = View.GONE
+                                } else {
+                                    binding.tvNoClass.visibility = View.GONE
+                                    binding.rcViewStudent.visibility = View.VISIBLE
+                                }
+                                myAdapter.notifyDataSetChanged()
+                            }
+                        }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -152,7 +175,7 @@ class StudentActivity : AppCompatActivity() {
             .get()
             .addOnSuccessListener { snapshot ->
                val USERNAME = snapshot.child("name").value.toString()
-            val USEREMAIL = snapshot.child("email").value.toString()
+               val USEREMAIL = snapshot.child("email").value.toString()
                 drawerBinding.tvUserName.text="Name : $USERNAME"
                 drawerBinding.tvUserEmail.text="Gmail : $USEREMAIL"
             }

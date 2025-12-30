@@ -42,16 +42,16 @@ class DiscussionForum : AppCompatActivity() {
         super.onCreate(savedInstanceState)
        binding= ActivityDiscussionForumBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        teacherName=intent.getStringExtra("TeacherName")?:""
+        classCode=intent.getStringExtra("ClassCode")?:""
+        topicOfCLass=intent.getStringExtra("ClassTopic")?:""
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         FirebaseDatabase.getInstance().getReference("Users").child(currentUserId).child("role")
             .get().addOnSuccessListener { snapshot ->
                 role = snapshot.value.toString()
-                listenForNewDiscussion(classCode,teacherName,topicOfCLass)
+                listenForNewDiscussion()
             }
-         teacherName=intent.getStringExtra("TeacherName")?:""
-         classCode=intent.getStringExtra("ClassCode")?:""
-         topicOfCLass=intent.getStringExtra("ClassTopic")?:""
+
 
 
         binding.teacherNAME.text="Created by : $teacherName"
@@ -123,7 +123,7 @@ class DiscussionForum : AppCompatActivity() {
         val builder=android.app.AlertDialog.Builder(this)
         builder.setTitle("Delete message?")
         builder.setMessage("Are you sure , you want to delete this message")
-        builder.setPositiveButton("Yes , Delete "){ dialog, which ->
+        builder.setPositiveButton("Yes Delete "){ dialog, which ->
             deleteDiscussionFromFirebase(discussion)
 
         }
@@ -135,7 +135,7 @@ class DiscussionForum : AppCompatActivity() {
         alert.show()
 
     }
-    private fun listenForNewDiscussion(classcode: String,teachername : String,topicofclass: String){
+    private fun listenForNewDiscussion(){
         val discussionRef = FirebaseDatabase.getInstance().getReference("Classes").child(classCode).child("Discussion")
         discussionRef.addChildEventListener(object : ChildEventListener{
             override fun onChildAdded(
@@ -223,6 +223,7 @@ class DiscussionForum : AppCompatActivity() {
                 val discussion= Discussion(userNAME = userName,message=message, discussionId = discussionId, senderUid = uid)
                    ref.setValue(discussion).addOnSuccessListener {
                        Toast.makeText(this,"Message sent", Toast.LENGTH_SHORT).show()
+                       binding.etMessage.text?.clear()
                     }
                     .addOnFailureListener{
                         Toast.makeText(this,"Failed to send message , try again ", Toast.LENGTH_SHORT).show()
