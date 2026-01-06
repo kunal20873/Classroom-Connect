@@ -1,5 +1,4 @@
 package com.example.classroomconnect
-
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -10,13 +9,12 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
-import android.util.Log
 import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.classroomconnect.databinding.DrawerLayoutBinding
 import com.google.firebase.database.DataSnapshot
-import java.security.KeyStore
+
 
 
 class TeacherActivity : AppCompatActivity() {
@@ -40,7 +38,7 @@ class TeacherActivity : AppCompatActivity() {
         drawerBinding.btnLogout.setOnClickListener {
             val builder=android.app.AlertDialog.Builder(this)
             builder.setTitle("Log Out ")
-            builder.setMessage("Are you sure ? , you want to log out")
+            builder.setMessage("Are you sure ? You want to log out")
             builder.setPositiveButton("Yes Logout "){ dialog, which ->
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, MainActivity::class.java)

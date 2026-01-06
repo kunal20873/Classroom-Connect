@@ -30,30 +30,31 @@ class DiscussionForum : AppCompatActivity() {
     private lateinit var userName : String
     private lateinit var classCode : String
     private var isInitialLoad = true
-    private lateinit var role : String
+    private  var role : String = ""
     private lateinit var messageList: ArrayList<Discussion>
     private lateinit var myAdapter: DiscussionAdapter
-    private lateinit var classTeacherId : String
+    private  var classTeacherId : String? =null
     private lateinit var teacherName : String
     private lateinit var topicOfCLass : String
-
     private  lateinit var currentUserId : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
        binding= ActivityDiscussionForumBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if(currentUser==null) {
+            finish()
+            return
+        }
+        currentUserId=currentUser.uid
         teacherName=intent.getStringExtra("TeacherName")?:""
         classCode=intent.getStringExtra("ClassCode")?:""
         topicOfCLass=intent.getStringExtra("ClassTopic")?:""
-        currentUserId = FirebaseAuth.getInstance().currentUser?.uid.toString()
         FirebaseDatabase.getInstance().getReference("Users").child(currentUserId).child("role")
             .get().addOnSuccessListener { snapshot ->
-                role = snapshot.value.toString()
+                role = snapshot.value?.toString()?:""
                 listenForNewDiscussion()
             }
-
-
-
         binding.teacherNAME.text="Created by : $teacherName"
         binding.classCODE.text="CLass Id : $classCode"
         binding.nameoftopic.text= "Topic : $topicOfCLass"
@@ -62,7 +63,7 @@ class DiscussionForum : AppCompatActivity() {
         val dataRef = FirebaseDatabase.getInstance().getReference("Classes")
         dataRef.child(classCode).get().addOnSuccessListener { snapshot ->
 
-            classTeacherId = snapshot.child("uid").value.toString()
+            classTeacherId = snapshot.child("uid").value?.toString()
 
 
         }
@@ -74,11 +75,8 @@ class DiscussionForum : AppCompatActivity() {
             else {
                 Toast.makeText(this,"Student can't delete the messages ", Toast.LENGTH_SHORT).show()
             }
-
         }
-
         binding.rcViewDoubt.adapter=myAdapter
-
         loadMessages()
         binding.btnSend.setOnClickListener {
             val message = binding.etMessage.text.toString()
@@ -109,8 +107,6 @@ class DiscussionForum : AppCompatActivity() {
               if(messageList.isNotEmpty()){
                   binding.rcViewDoubt.scrollToPosition(messageList.size-1)
               }
-                Log.d("Message_List_Size",messageList.size.toString())
-
             }
 
             override fun onCancelled(error: DatabaseError) {

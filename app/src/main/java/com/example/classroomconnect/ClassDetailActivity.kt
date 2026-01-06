@@ -1,5 +1,4 @@
 package com.example.classroomconnect
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -7,12 +6,9 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
-
 import com.example.classroomconnect.databinding.ActivityClassDetailBinding
-
 import com.google.firebase.database.DataSnapshot
 import android.util.Log
 import android.view.View
@@ -236,13 +232,15 @@ class ClassDetailActivity : AppCompatActivity() {
 
         }
     }
-    private fun openDoubtForum(){
-        val intent = Intent(this, DiscussionForum::class.java)
-
-        intent.putExtra("ClassTopic",CLASSNAME)
-        intent.putExtra("TeacherName",techerNAME)
-        intent.putExtra("ClassCode",classcode)
-        startActivity(intent)
+    private fun openDoubtForum() {https://youtu.be/Suo7KhmD-Ko?si=XcF71_Hsd6bw0xda
+        if (::CLASSNAME.isInitialized && ::techerNAME.isInitialized) {
+            val intent = Intent(this, DiscussionForum::class.java)
+            intent.putExtra("ClassTopic", CLASSNAME)
+            intent.putExtra("TeacherName", techerNAME)
+            intent.putExtra("ClassCode", classcode)
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, "Loading class details... please wait", Toast.LENGTH_SHORT).show()
+        }
     }
-
 }
