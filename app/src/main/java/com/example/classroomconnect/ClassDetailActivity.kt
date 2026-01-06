@@ -232,7 +232,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
         }
     }
-    private fun openDoubtForum() {https://youtu.be/Suo7KhmD-Ko?si=XcF71_Hsd6bw0xda
+    private fun openDoubtForum() {
         if (::CLASSNAME.isInitialized && ::techerNAME.isInitialized) {
             val intent = Intent(this, DiscussionForum::class.java)
             intent.putExtra("ClassTopic", CLASSNAME)
