@@ -4,10 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.activity.enableEdgeToEdge
-import androidx.core.view.WindowInsetsCompat
-import com.example.classroomconnect.databinding.ActivityMainBinding
 import com.example.classroomconnect.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
