@@ -21,8 +21,6 @@ class StudentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudentBinding
 
     private lateinit var classArrayList: ArrayList<MODEL>
-    private lateinit var database: FirebaseDatabase
-    private lateinit var valueEventListener: ValueEventListener
     private lateinit var drawerBinding: DrawerLayoutBinding
     private lateinit var uid: String
     private lateinit var myAdapter: StudentAdapter
@@ -99,10 +97,6 @@ class StudentActivity : AppCompatActivity() {
                     Toast.makeText(this,"Unknown error occured , try again ", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
-        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
-            FirebaseDatabase.getInstance().getReference("Users").child(uid).child("fcmToken").setValue(token)
-
         }
     }
     private fun joinClass(classId: String){

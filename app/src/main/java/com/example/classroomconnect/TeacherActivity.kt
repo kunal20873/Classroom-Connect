@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.classroomconnect.databinding.ActivityTeacherBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseError
@@ -19,10 +18,7 @@ import com.google.firebase.database.DataSnapshot
 
 class TeacherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTeacherBinding
-    private lateinit var databaseReference: DatabaseReference
     private  lateinit var classArrayList: ArrayList<MODEL>
-
-    private lateinit var valueEventListener: ValueEventListener
     private lateinit var drawerBinding: DrawerLayoutBinding
     private lateinit var uid : String
     private lateinit var myAdapter: TeacherAdapter
@@ -87,7 +83,7 @@ class TeacherActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance().getReference("Classes")
 
         fun tryCreateclass() {
-            val topic = binding.etTopic.text.toString().trim()
+            val topic =className
             val classId = generateClassId()
             database.child(classId).get().addOnSuccessListener { snapshot ->
                 if (snapshot.exists()) {

@@ -78,7 +78,6 @@ class ClassDetailActivity : AppCompatActivity() {
         binding.btnAddMaterial.setOnClickListener {
             val MATERIAl = binding.topicMaterial.text.toString().trim()
             val LINK = binding.materialLink.text.toString().trim()
-
             val ref= FirebaseDatabase.getInstance().getReference("Classes").child(classcode).child("Material").push()
             val materialId=ref.key!!
             val classOfMetarial = Material(materialId,MATERIAl,LINK)
@@ -106,7 +105,6 @@ class ClassDetailActivity : AppCompatActivity() {
                 val topic = snapshot.child("topic").value?.toString()?:"New Material"
                 val message="$topic\n Class  : $CLASSNAME ($classcode)"
                 showNotificationFunction("New material added",message,classcode)
-
             }
 
             override fun onChildChanged(
