@@ -36,6 +36,7 @@ class StudentAdapter(var classArrayList: ArrayList<MODEL>, var context: Activity
         viewType: Int
     ): StudentAdapter.MyViewHolder {
       val itemView= LayoutInflater.from(parent.context).inflate(R.layout.each_class,parent,false)
+
         return MyViewHolder(itemView,myListener)
     }
 

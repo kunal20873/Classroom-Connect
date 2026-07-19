@@ -13,9 +13,6 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.classroomconnect.databinding.DrawerLayoutBinding
 import com.google.firebase.database.DataSnapshot
-
-
-
 class TeacherActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTeacherBinding
     private  lateinit var classArrayList: ArrayList<MODEL>
@@ -74,10 +71,7 @@ class TeacherActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter class name ", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             } else createClass(className)
-
         }
-
-
     }
     private fun createClass(className: String) {
         val database = FirebaseDatabase.getInstance().getReference("Classes")

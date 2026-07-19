@@ -19,7 +19,6 @@ import android.view.View
 
 class StudentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudentBinding
-
     private lateinit var classArrayList: ArrayList<MODEL>
     private lateinit var drawerBinding: DrawerLayoutBinding
     private lateinit var uid: String
@@ -33,7 +32,6 @@ class StudentActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         drawerBinding.btnLogout.setOnClickListener {
-
             val builder=android.app.AlertDialog.Builder(this)
             builder.setTitle("Log Out ")
             builder.setMessage("Are you sure ? You want to log out")
@@ -44,7 +42,6 @@ class StudentActivity : AppCompatActivity() {
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)
                 finish()
-
             }
             builder.setNegativeButton("No "){dialog, which ->
                 dialog.dismiss()
@@ -152,22 +149,19 @@ class StudentActivity : AppCompatActivity() {
                         }
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@StudentActivity, "Error , Try again", Toast.LENGTH_SHORT)
                     .show()
             }
-
         })
 }
     private fun sendData(){
         val uid = FirebaseAuth.getInstance().currentUser!!.uid
-
         FirebaseDatabase.getInstance()
             .getReference("Users")
             .child(uid)
             .get()
-            .addOnSuccessListener { snapshot ->
+            .addOnSuccessListener {snapshot ->
                val USERNAME = snapshot.child("name").value.toString()
                val USEREMAIL = snapshot.child("email").value.toString()
                 drawerBinding.tvUserName.text="Name : $USERNAME"

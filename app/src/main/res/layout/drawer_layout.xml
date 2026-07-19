@@ -4,6 +4,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:clickable="true"
+    android:focusable="true"
     android:background="#F2F6FF"
     android:layout_gravity="start">
     <androidx.cardview.widget.CardView

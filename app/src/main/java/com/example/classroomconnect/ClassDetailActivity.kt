@@ -11,6 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.classroomconnect.databinding.ActivityClassDetailBinding
 import com.google.firebase.database.DataSnapshot
 import android.util.Log
+import android.net.Uri
+import android.provider.OpenableColumns
+import androidx.activity.result.contract.ActivityResultContracts
 import android.view.View
 import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,7 +22,15 @@ import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import io.github.jan.supabase.storage.storage
+import io.github.jan.supabase.storage.upload
+import java.io.File
+import java.io.FileOutputStream
+import androidx.activity.result.ActivityResultLauncher
 class ClassDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityClassDetailBinding
     private lateinit var materialList : ArrayList<Material>
@@ -27,12 +38,19 @@ class ClassDetailActivity : AppCompatActivity() {
     private lateinit var classcode: String
     private lateinit var role : String
     private lateinit var CLASSNAME : String
-
+    private var pdfUri: Uri? = null
     private var isInitialLoad = true
     private lateinit var classTeacherUid : String
     private  lateinit var currentUserId : String
     private lateinit var techerNAME : String
+    private val pdfPickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri != null) {
+                pdfUri = uri
+                binding.txtSelectedFile.text = getFileName(uri)
+            }
 
+        }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClassDetailBinding.inflate(layoutInflater)
@@ -53,16 +71,48 @@ class ClassDetailActivity : AppCompatActivity() {
         binding.classCode.text = "Class ID : ${classcode}"
         materialList= ArrayList()
         binding.rcViewMaterial.layoutManager= LinearLayoutManager(this)
-        myAdapter= MaterialAdapter(materialList,this){ selectedMaterial ->
-            currentUserId
-            if(currentUserId!=null&&currentUserId==classTeacherUid){
-                showDeleteDialog(selectedMaterial)
-            } else {
-                Toast.makeText(this,"Student can not delete material ", Toast.LENGTH_SHORT).show()
+        myAdapter = MaterialAdapter(
+            materialList,
+            this,
+
+            // Long Press -> Delete
+            { selectedMaterial ->
+
+                if (currentUserId == classTeacherUid) {
+                    showDeleteDialog(selectedMaterial)
+                } else {
+                    Toast.makeText(
+                        this,
+                        "Student cannot delete material",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            },
+
+            // Single Click -> Open PDF
+            { selectedMaterial ->
+
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    setDataAndType(
+                        Uri.parse(selectedMaterial.pdfUrl),
+                        "application/pdf"
+                    )
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this,
+                        "No PDF Viewer Installed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
 
             }
-
-        }
+        )
         binding.rcViewMaterial.adapter=myAdapter
         loadMaterial()
 
@@ -76,20 +126,28 @@ class ClassDetailActivity : AppCompatActivity() {
         }
 
         binding.btnAddMaterial.setOnClickListener {
-            val MATERIAl = binding.topicMaterial.text.toString().trim()
-            val LINK = binding.materialLink.text.toString().trim()
-            val ref= FirebaseDatabase.getInstance().getReference("Classes").child(classcode).child("Material").push()
-            val materialId=ref.key!!
-            val classOfMetarial = Material(materialId,MATERIAl,LINK)
-            ref.setValue(classOfMetarial).addOnSuccessListener {
-                Toast.makeText(this, "Material added successfully", Toast.LENGTH_SHORT).show()
 
-            }.addOnFailureListener {
-                Toast.makeText(this, "Material upload failed,try again", Toast.LENGTH_SHORT).show()
+            val material = binding.topicMaterial.text.toString().trim()
+
+            if (material.isEmpty()) {
+                Toast.makeText(this, "Enter Material Name", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+
+            if (pdfUri == null) {
+                Toast.makeText(this, "Choose PDF First", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            uploadPdfToSupabase(material)
+
         }
 
+        binding.btnChoosePdf.setOnClickListener {
 
+            pdfPickerLauncher.launch("application/pdf")
+
+        }
         binding.btnDoubt.setOnClickListener {
             openDoubtForum()
         }
@@ -162,6 +220,120 @@ class ClassDetailActivity : AppCompatActivity() {
 
         })
     }
+    private fun getFileName(uri: Uri): String {
+
+        var fileName = "Selected PDF"
+
+        val cursor = contentResolver.query(uri, null, null, null, null)
+
+        cursor?.use {
+
+            val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+
+            if (it.moveToFirst() && index != -1) {
+                fileName = it.getString(index)
+            }
+
+        }
+
+        return fileName
+    }
+    private fun uriToFile(uri: Uri): File {
+
+        val fileName = getFileName(uri)
+
+        val file = File(cacheDir, fileName)
+
+        contentResolver.openInputStream(uri)?.use { inputStream ->
+
+            FileOutputStream(file).use { outputStream ->
+
+                inputStream.copyTo(outputStream)
+
+            }
+
+        }
+
+        return file
+    }
+    private fun uploadPdfToSupabase(materialName: String) {
+
+        if (pdfUri == null) {
+            Toast.makeText(this, "Please choose a PDF", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            try {
+
+                val file = uriToFile(pdfUri!!)
+
+                val fileName = "${System.currentTimeMillis()}_${file.name}"
+
+                withContext(Dispatchers.IO) {
+
+                    SupabaseClient.client
+                        .storage
+                        .from("materials")
+                        .upload(
+                            path = fileName,
+                            data = file.readBytes()
+                        )
+
+                }
+                val pdfUrl =
+                    "https://ttansuvasafbnrftfxor.supabase.co/storage/v1/object/public/materials/$fileName"
+
+                val materialId = FirebaseDatabase.getInstance()
+                    .getReference("Classes")
+                    .child(classcode)
+                    .child("Material")
+                    .push()
+                    .key!!
+
+                // Change this block in ClassDetailActivity.kt
+                val material = Material(
+                    materialId = materialId,
+                    topic = materialName,
+                    pdfUrl = pdfUrl, // Changed from link to pdfUrl
+                    fileName = file.name // Added fileName so it shows up in the list
+                )
+
+                FirebaseDatabase.getInstance()
+                    .getReference("Classes")
+                    .child(classcode)
+                    .child("Material")
+                    .child(materialId)
+                    .setValue(material)
+                    .addOnSuccessListener {
+                        file.delete()
+                        Toast.makeText(
+                            this@ClassDetailActivity,
+                            "PDF Uploaded Successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
+                        binding.topicMaterial.text?.clear()
+                        binding.txtSelectedFile.text = ""
+                        pdfUri = null
+                    }
+                    .addOnFailureListener {
+
+                        Toast.makeText(
+                            this@ClassDetailActivity,
+                            "Failed to save material",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+            } catch (e: Exception) {
+                Toast.makeText(
+                    this@ClassDetailActivity,
+                    e.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
     private fun showDeleteDialog(material: Material){
         val builder=android.app.AlertDialog.Builder(this)
         builder.setTitle("Delete material")
@@ -217,10 +389,8 @@ class ClassDetailActivity : AppCompatActivity() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
             .build()
-        manager.notify(System.currentTimeMillis().toInt(),notification)
+        manager.notify(classCode.hashCode(),notification)
     }
-
-
 
     private fun fetchTeacherName(uid: String){
         val dataREF= FirebaseDatabase.getInstance().getReference("Users")
@@ -230,6 +400,7 @@ class ClassDetailActivity : AppCompatActivity() {
 
         }
     }
+
     private fun openDoubtForum() {
         if (::CLASSNAME.isInitialized && ::techerNAME.isInitialized) {
             val intent = Intent(this, DiscussionForum::class.java)

@@ -1,5 +1,4 @@
 package com.example.classroomconnect
-
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -39,7 +38,7 @@ class DiscussionForum : AppCompatActivity() {
     private  lateinit var currentUserId : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding= ActivityDiscussionForumBinding.inflate(layoutInflater)
+        binding= ActivityDiscussionForumBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val currentUser = FirebaseAuth.getInstance().currentUser
         if(currentUser==null) {
@@ -86,9 +85,6 @@ class DiscussionForum : AppCompatActivity() {
                 createMessage(message)
             }
         }
-
-
-
     }
     private fun loadMessages(){
         val dataRef= FirebaseDatabase.getInstance().getReference("Classes").child(classCode).child("Discussion")
@@ -104,9 +100,9 @@ class DiscussionForum : AppCompatActivity() {
 
                 }
                 myAdapter.notifyDataSetChanged()
-              if(messageList.isNotEmpty()){
-                  binding.rcViewDoubt.scrollToPosition(messageList.size-1)
-              }
+                if(messageList.isNotEmpty()){
+                    binding.rcViewDoubt.scrollToPosition(messageList.size-1)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -181,7 +177,6 @@ class DiscussionForum : AppCompatActivity() {
                 Toast.makeText(this,"Fail to delete message , try again ", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
     private fun showNotification(title: String,message: String){
         val channelId = "Discussion_Channel"
@@ -212,15 +207,14 @@ class DiscussionForum : AppCompatActivity() {
 
         FirebaseDatabase.getInstance().getReference("Users").child(uid).child("name").get()
             .addOnSuccessListener { snapshot ->
-                 userName = snapshot.value.toString()
-
-              val ref =  FirebaseDatabase.getInstance().getReference("Classes").child(classCode).child("Discussion").push()
-                  val discussionId = ref.key!!
+                userName = snapshot.value.toString()
+                val ref =  FirebaseDatabase.getInstance().getReference("Classes").child(classCode).child("Discussion").push()
+                val discussionId = ref.key!!
                 val discussion= Discussion(userNAME = userName,message=message, discussionId = discussionId, senderUid = uid)
-                   ref.setValue(discussion).addOnSuccessListener {
-                       Toast.makeText(this,"Message sent", Toast.LENGTH_SHORT).show()
-                       binding.etMessage.text?.clear()
-                    }
+                ref.setValue(discussion).addOnSuccessListener {
+                    Toast.makeText(this,"Message sent", Toast.LENGTH_SHORT).show()
+                    binding.etMessage.text?.clear()
+                }
                     .addOnFailureListener{
                         Toast.makeText(this,"Failed to send message , try again ", Toast.LENGTH_SHORT).show()
                     }

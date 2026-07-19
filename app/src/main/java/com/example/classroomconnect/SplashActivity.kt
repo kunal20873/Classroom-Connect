@@ -6,18 +6,18 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.classroomconnect.databinding.ActivitySplashBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 
 class SplashActivity : AppCompatActivity() {
-
+     private lateinit var binding : ActivitySplashBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
-
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val auth = FirebaseAuth.getInstance()
         val user = auth.currentUser
-
         Handler(Looper.getMainLooper()).postDelayed({
             if (user != null) {
                 fetchRoleAndRedirect(user.uid)
@@ -27,7 +27,6 @@ class SplashActivity : AppCompatActivity() {
             }
         }, 1500)
     }
-
     private fun fetchRoleAndRedirect(uid: String) {
         FirebaseDatabase.getInstance().getReference("Users").child(uid).get()
             .addOnSuccessListener { snapshot ->
