@@ -8,24 +8,30 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.classroomconnect.TeacherAdapter.onItemClickListener
 
-class StudentAdapter(var classArrayList: ArrayList<MODEL>, var context: Activity) :
- RecyclerView.Adapter<StudentAdapter.MyViewHolder>(){
-    private lateinit var myListener:onItemClickListener
+class StudentAdapter(
+    var classArrayList: ArrayList<MODEL>,
+    var context: Activity,
+    private val onMoreClick: (MODEL, View) -> Unit
+) : RecyclerView.Adapter<StudentAdapter.MyViewHolder>() {
+    private lateinit var myListener: onItemClickListener
+
     interface onItemClickListener {
-        fun onItemClick(position: Int){
-
-        }
-
+        fun onItemClick(position: Int) {}
     }
-    fun setOnItemClickListener (listener: onItemClickListener) {
+
+    fun setOnItemClickListener(listener: onItemClickListener) {
         myListener = listener
     }
-    class MyViewHolder(itemView: View,listener:onItemClickListener): RecyclerView.ViewHolder(itemView){
 
-        val className=itemView.findViewById<TextView>(R.id.tEach1)
+    class MyViewHolder(itemView: View, listener: onItemClickListener) :
+        RecyclerView.ViewHolder(itemView) {
+
+        val className = itemView.findViewById<TextView>(R.id.tEach1)
         val classId = itemView.findViewById<TextView>(R.id.tEach2)
-        init{
-            itemView.setOnClickListener{
+        val btnMore = itemView.findViewById<View>(R.id.btnMore)
+
+        init {
+            itemView.setOnClickListener {
                 listener.onItemClick(adapterPosition)
             }
         }
@@ -42,10 +48,14 @@ class StudentAdapter(var classArrayList: ArrayList<MODEL>, var context: Activity
 
     override fun onBindViewHolder(holder: StudentAdapter.MyViewHolder, position: Int) {
         val currentItem = classArrayList[position]
-        var x=currentItem.topic
-        var y=currentItem.classId
-        holder.className.text =" Topic : $x"
-        holder.classId.text="Class id : $y"
+        var x = currentItem.topic
+        var y = currentItem.classId
+        holder.className.text = " Topic : $x"
+        holder.classId.text = "Class id : $y"
+
+        holder.btnMore.setOnClickListener {
+            onMoreClick(currentItem, it)
+        }
     }
 
     override fun getItemCount(): Int {

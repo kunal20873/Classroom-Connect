@@ -11,12 +11,21 @@ class MaterialAdapter(
     var materialList: ArrayList<Material>,
     var context: Activity,
     var onDeleteClick: (Material) -> Unit,
-    var onOpenPdf: (Material) -> Unit
+    var onOpenPdf: (Material) -> Unit,
+    var onQuizClick: (Material) -> Unit
 ) : RecyclerView.Adapter<MaterialAdapter.MyViewHolder>() {
+
+    private var userRole: String? = null
+
+    fun setUserRole(role: String) {
+        userRole = role
+        notifyDataSetChanged()
+    }
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val MaterialNAME = itemView.findViewById<TextView>(R.id.tvEach1)
         val materialLink = itemView.findViewById<TextView>(R.id.tvEach2)
+        val btnQuiz = itemView.findViewById<TextView>(R.id.btnQuiz)
     }
 
     override fun onCreateViewHolder(
@@ -37,9 +46,21 @@ class MaterialAdapter(
         holder.MaterialNAME.text = currentItem.topic
         holder.materialLink.text = currentItem.fileName ?: "PDF File"
 
+        // Show/Hide Quiz button based on role
+        if (userRole == "Student") {
+            holder.btnQuiz.visibility = View.VISIBLE
+        } else {
+            holder.btnQuiz.visibility = View.GONE
+        }
+
         // Open PDF on normal click
         holder.itemView.setOnClickListener {
             onOpenPdf(currentItem)
+        }
+
+        // Quiz on quiz button click
+        holder.btnQuiz.setOnClickListener {
+            onQuizClick(currentItem)
         }
 
         // Delete on long press

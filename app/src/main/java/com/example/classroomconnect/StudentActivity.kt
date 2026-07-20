@@ -16,6 +16,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import android.view.View
+import android.widget.PopupMenu
+import androidx.appcompat.app.AlertDialog
 
 class StudentActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudentBinding
@@ -30,6 +32,9 @@ class StudentActivity : AppCompatActivity() {
        drawerBinding = binding.drawer
         binding.btnMenu1.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
+        }
+        drawerBinding.btnDashboard.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
         drawerBinding.btnLogout.setOnClickListener {
             val builder=android.app.AlertDialog.Builder(this)
@@ -59,7 +64,9 @@ class StudentActivity : AppCompatActivity() {
         }
         binding.rcViewStudent.layoutManager= LinearLayoutManager(this)
         classArrayList=ArrayList()
-        myAdapter= StudentAdapter(classArrayList,this)
+        myAdapter = StudentAdapter(classArrayList, this) { model, view ->
+            showLeaveClassMenu(view, model)
+        }
         binding.rcViewStudent.adapter=myAdapter
         myAdapter.setOnItemClickListener(object : StudentAdapter.onItemClickListener
         {
@@ -167,5 +174,40 @@ class StudentActivity : AppCompatActivity() {
                 drawerBinding.tvUserName.text="Name : $USERNAME"
                 drawerBinding.tvUserEmail.text="Gmail : $USEREMAIL"
             }
+    }
+
+    private fun showLeaveClassMenu(view: View, model: MODEL) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menu.add("Leave Class")
+        popupMenu.setOnMenuItemClickListener { item ->
+            if (item.title == "Leave Class") {
+                confirmLeaveClass(model)
+            }
+            true
+        }
+        popupMenu.show()
+    }
+
+    private fun confirmLeaveClass(model: MODEL) {
+        AlertDialog.Builder(this)
+            .setTitle("Leave Class")
+            .setMessage("Are you sure you want to leave '${model.topic}'?")
+            .setPositiveButton("Leave") { _, _ ->
+                model.classId?.let { leaveClass(it) }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun leaveClass(classId: String) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val ref = FirebaseDatabase.getInstance().getReference("Users")
+            .child(uid).child("joinedClasses").child(classId)
+
+        ref.removeValue().addOnSuccessListener {
+            Toast.makeText(this, "Left class successfully", Toast.LENGTH_SHORT).show()
+        }.addOnFailureListener {
+            Toast.makeText(this, "Failed to leave class", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -28,6 +28,9 @@ class TeacherActivity : AppCompatActivity() {
         binding.btnMenu1.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+        drawerBinding.btnDashboard.setOnClickListener {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
         drawerBinding.btnLogout.setOnClickListener {
             val builder=android.app.AlertDialog.Builder(this)
             builder.setTitle("Log Out ")

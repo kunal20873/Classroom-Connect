@@ -49,14 +49,11 @@ class ClassDetailActivity : AppCompatActivity() {
                 pdfUri = uri
                 binding.txtSelectedFile.text = getFileName(uri)
             }
-
         }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityClassDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
         classcode = intent.getStringExtra("ClassId") ?:run{
             Toast.makeText(this,"Class not found ", Toast.LENGTH_SHORT).show()
             finish()
@@ -111,18 +108,27 @@ class ClassDetailActivity : AppCompatActivity() {
                     ).show()
                 }
 
+            },
+            // Practice Quiz click
+            { selectedMaterial ->
+                val intent = Intent(this, QuizActivity::class.java).apply {
+                    putExtra("MaterialTopic", selectedMaterial.topic)
+                    putExtra("PdfUrl", selectedMaterial.pdfUrl)
+                }
+                startActivity(intent)
             }
         )
+        if (::role.isInitialized) {
+            myAdapter.setUserRole(role)
+        }
         binding.rcViewMaterial.adapter=myAdapter
         loadMaterial()
-
         val dataRef = FirebaseDatabase.getInstance().getReference("Classes")
         dataRef.child(classcode).get().addOnSuccessListener { snapshot ->
             CLASSNAME = snapshot.child("topic").value.toString()
             classTeacherUid = snapshot.child("uid").value.toString()
             binding.topicname.text = " Topic : $CLASSNAME"
             fetchTeacherName(classTeacherUid)
-
         }
 
         binding.btnAddMaterial.setOnClickListener {
@@ -164,7 +170,6 @@ class ClassDetailActivity : AppCompatActivity() {
                 val message="$topic\n Class  : $CLASSNAME ($classcode)"
                 showNotificationFunction("New material added",message,classcode)
             }
-
             override fun onChildChanged(
                 snapshot: DataSnapshot,
                 previousChildName: String?
@@ -185,7 +190,9 @@ class ClassDetailActivity : AppCompatActivity() {
         }
     }
     private fun checkRoleandUpdateUi(){
-
+        if (::myAdapter.isInitialized) {
+            myAdapter.setUserRole(role)
+        }
         if(role=="Student"){
             binding.cardAddMaterial.visibility= View.GONE
             listenForNewMaterial(classcode)
@@ -193,7 +200,6 @@ class ClassDetailActivity : AppCompatActivity() {
         else{
             binding.cardAddMaterial.visibility= View.VISIBLE
         }
-
     }
     private fun loadMaterial(){
         val materialRef= FirebaseDatabase.getInstance().getReference("Classes").child(classcode).child("Material")
@@ -217,25 +223,17 @@ class ClassDetailActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@ClassDetailActivity,"Error , try again ", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
     private fun getFileName(uri: Uri): String {
-
         var fileName = "Selected PDF"
-
         val cursor = contentResolver.query(uri, null, null, null, null)
-
         cursor?.use {
-
             val index = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-
             if (it.moveToFirst() && index != -1) {
                 fileName = it.getString(index)
             }
-
         }
-
         return fileName
     }
     private fun uriToFile(uri: Uri): File {
@@ -251,26 +249,20 @@ class ClassDetailActivity : AppCompatActivity() {
                 inputStream.copyTo(outputStream)
 
             }
-
         }
-
         return file
     }
     private fun uploadPdfToSupabase(materialName: String) {
-
         if (pdfUri == null) {
             Toast.makeText(this, "Please choose a PDF", Toast.LENGTH_SHORT).show()
             return
         }
         lifecycleScope.launch {
             try {
-
                 val file = uriToFile(pdfUri!!)
-
-                val fileName = "${System.currentTimeMillis()}_${file.name}"
-
-                withContext(Dispatchers.IO) {
-
+                val extension = if (file.extension.isNotEmpty()) file.extension else "pdf"
+                val fileName = "${System.currentTimeMillis()}.$extension"
+                withContext(Dispatchers.IO) { 
                     SupabaseClient.client
                         .storage
                         .from("materials")
@@ -278,18 +270,15 @@ class ClassDetailActivity : AppCompatActivity() {
                             path = fileName,
                             data = file.readBytes()
                         )
-
                 }
                 val pdfUrl =
                     "https://ttansuvasafbnrftfxor.supabase.co/storage/v1/object/public/materials/$fileName"
-
                 val materialId = FirebaseDatabase.getInstance()
                     .getReference("Classes")
                     .child(classcode)
                     .child("Material")
                     .push()
                     .key!!
-
                 // Change this block in ClassDetailActivity.kt
                 val material = Material(
                     materialId = materialId,
@@ -297,7 +286,6 @@ class ClassDetailActivity : AppCompatActivity() {
                     pdfUrl = pdfUrl, // Changed from link to pdfUrl
                     fileName = file.name // Added fileName so it shows up in the list
                 )
-
                 FirebaseDatabase.getInstance()
                     .getReference("Classes")
                     .child(classcode)
@@ -311,13 +299,11 @@ class ClassDetailActivity : AppCompatActivity() {
                             "PDF Uploaded Successfully",
                             Toast.LENGTH_SHORT
                         ).show()
-
                         binding.topicMaterial.text?.clear()
                         binding.txtSelectedFile.text = ""
                         pdfUri = null
                     }
                     .addOnFailureListener {
-
                         Toast.makeText(
                             this@ClassDetailActivity,
                             "Failed to save material",
@@ -366,12 +352,9 @@ class ClassDetailActivity : AppCompatActivity() {
         val channelId="material_channel"
         val intent = Intent(this, ClassDetailActivity::class.java).apply {
             putExtra("ClassId",classCode)
-
-
         }
         val pendingIntent= PendingIntent.getActivity(this,classcode.hashCode(),intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )
-
         val manager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
@@ -391,16 +374,13 @@ class ClassDetailActivity : AppCompatActivity() {
             .build()
         manager.notify(classCode.hashCode(),notification)
     }
-
     private fun fetchTeacherName(uid: String){
         val dataREF= FirebaseDatabase.getInstance().getReference("Users")
         dataREF.child(uid).get().addOnSuccessListener { snapshot ->
             techerNAME = snapshot.child("name").value.toString()
             binding.teacherName.text="Created by : $techerNAME"
-
         }
     }
-
     private fun openDoubtForum() {
         if (::CLASSNAME.isInitialized && ::techerNAME.isInitialized) {
             val intent = Intent(this, DiscussionForum::class.java)

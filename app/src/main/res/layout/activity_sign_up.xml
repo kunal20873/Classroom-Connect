@@ -5,53 +5,63 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F7FA"
+    android:background="#F2F6FF"
     android:fitsSystemWindows="true"
     tools:context=".SignUp">
+
+    <!-- Decorative Header -->
+    <View
+        android:id="@+id/headerDecorator"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:background="#5A6CFF"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/ivHeaderIllustration"
-            android:layout_width="180dp"
-            android:layout_height="140dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="160dp"
+            android:layout_height="120dp"
+            android:layout_marginBottom="12dp"
             android:contentDescription="Sign Up Illustration"
-            android:src="@drawable/ic_signup_illustration" />
+            android:src="@drawable/ic_signup_illustration"
+            app:tint="#FFFFFF" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create Account"
-            android:textColor="#1E293B"
-            android:textSize="30sp"
+            android:textColor="#FFFFFF"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Join us to get started"
-            android:textColor="#64748B"
-            android:textSize="15sp" />
+            android:layout_marginTop="4dp"
+            android:text="Join the modern classroom today"
+            android:textColor="#E0E7FF"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="-20dp"
         app:cardBackgroundColor="?attr/colorSurface"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="4dp"
+        app:cardCornerRadius="28dp"
+        app:cardElevation="8dp"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -60,118 +70,133 @@
             android:orientation="vertical"
             android:padding="24dp">
 
-
+            <!-- Name Input -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:hint="Full Name"
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:startIconTint="#6366F1">
+                app:startIconDrawable="@android:drawable/ic_menu_myplaces"
+                app:startIconTint="#5A6CFF">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPersonName"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Email Input -->
             <com.google.android.material.textfield.TextInputLayout
-
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="12dp"
                 android:hint="Email Address"
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
-                app:startIconTint="#6366F1">
+                app:startIconDrawable="@android:drawable/ic_dialog_email"
+                app:startIconTint="#5A6CFF">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/btEmailSignup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Password Input -->
             <com.google.android.material.textfield.TextInputLayout
-
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
+                android:layout_marginBottom="16dp"
                 android:hint="Password"
                 app:boxCornerRadiusBottomEnd="16dp"
                 app:boxCornerRadiusBottomStart="16dp"
                 app:boxCornerRadiusTopEnd="16dp"
                 app:boxCornerRadiusTopStart="16dp"
                 app:endIconMode="password_toggle"
-                app:endIconTint="#64748B"
-                app:startIconTint="#6366F1">
+                app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
+                app:startIconTint="#5A6CFF">
+
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etPasswordSignup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:textColor="?attr/colorOnSurface"
+                    android:textStyle="bold" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Role Selector Label -->
+            <!-- Role Selection -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:text="Select Your Role"
-                android:textColor="#475569"
+                android:layout_marginBottom="8dp"
+                android:text="I am a:"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
-            <!-- Radio Selection -->
             <RadioGroup
                 android:id="@+id/rgRole"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="28dp"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_height="50dp"
+                android:layout_marginBottom="24dp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:orientation="horizontal"
+                android:padding="4dp">
 
                 <RadioButton
                     android:id="@+id/rbStudent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/role_button_background"
+                    android:button="@null"
                     android:checked="true"
+                    android:gravity="center"
                     android:text="Student"
-                    android:textColor="#475569" />
+                    android:textColor="@color/role_button_text_color"
+                    android:textStyle="bold" />
 
                 <RadioButton
                     android:id="@+id/rbTeacher"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/role_button_background"
+                    android:button="@null"
+                    android:gravity="center"
                     android:text="Teacher"
-                    android:textColor="#475569" />
+                    android:textColor="@color/role_button_text_color"
+                    android:textStyle="bold" />
             </RadioGroup>
 
             <!-- Sign Up Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button3"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:backgroundTint="#6366F1"
-                android:text="Sign Up"
+                android:layout_height="56dp"
+                android:backgroundTint="#5A6CFF"
+                android:text="Create Account"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:cornerRadius="16dp"
-                app:elevation="2dp" />
+                app:elevation="4dp" />
 
             <!-- Bottom Link -->
             <TextView
@@ -179,10 +204,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="16dp"
-                android:padding="0dp"
-                android:text="Already Registered? Click here"
-                android:textColor="#6366F1"
+                android:layout_marginTop="20dp"
+                android:text="Already have an account? Sign In"
+                android:textColor="#5A6CFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 

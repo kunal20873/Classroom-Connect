@@ -30,27 +30,33 @@ class SignUp : AppCompatActivity() {
                    firebaseAuth.createUserWithEmailAndPassword(email,password)
                        .addOnCompleteListener(this) { task ->
                            if(task.isSuccessful){
+                               val user = firebaseAuth.currentUser
+                               user?.sendEmailVerification()?.addOnCompleteListener { verificationTask ->
+                                   if (verificationTask.isSuccessful) {
+                                       Toast.makeText(this, "Verification email sent. Please check your inbox.", Toast.LENGTH_LONG).show()
+                                   } else {
+                                       Toast.makeText(this, "Error sending verification email: ${verificationTask.exception?.message}", Toast.LENGTH_SHORT).show()
+                                   }
+                               }
 
-                               Toast.makeText(this,"Registerd Successfully ,Going to login page ",Toast.LENGTH_SHORT).show()
                                val name = binding.etName.text.toString()
                                val email=binding.btEmailSignup.text.toString()
-                               val uid= FirebaseAuth.getInstance().currentUser!!.uid
+                               val uid= user!!.uid
                                val role= selectedRole
-                               val user = User(name,role,email)
+                               val userModel = User(name,role,email)
                                database= FirebaseDatabase.getInstance().getReference("Users")
-                               database.child(uid).setValue(user).addOnSuccessListener {
-                                   Toast.makeText(this,"Registered Successfully", Toast.LENGTH_SHORT).show()
+                               database.child(uid).setValue(userModel).addOnSuccessListener {
+                                   // User saved to database
                                }.addOnFailureListener {
-                                   Toast.makeText(this,"Error Try again ",Toast.LENGTH_SHORT).show()
+                                   Toast.makeText(this,"Error saving user details",Toast.LENGTH_SHORT).show()
                                }
+                               
                                val intent = Intent(this, MainActivity::class.java)
                                startActivity(intent)
-
-
                                finish()
                            }
                            else {
-                               Toast.makeText(this,"Failed , try again", Toast.LENGTH_SHORT).show()
+                               Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
                            }
 
                        }
