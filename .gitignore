@@ -22,6 +22,9 @@ serviceAccountKey.json
 *.json.key
 .env
 .env.*
+*.jks
+*.keystore
+*.p12
 
 # Node.js (for your backend)
 node_modules/
@@ -29,5 +32,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Kotlin
+# IDE & OS Temporary Files
 .kotlin/
+.artifacts/
+.idea/
+*.log
+captures/
