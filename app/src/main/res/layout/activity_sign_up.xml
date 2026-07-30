@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F6FF"
+    android:background="?android:attr/windowBackground"
     android:fitsSystemWindows="true"
     tools:context=".SignUp">
 
@@ -54,14 +54,16 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="-20dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="28dp"
         app:cardElevation="8dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintTop_toBottomOf="@id/header">
 
         <LinearLayout
@@ -211,6 +213,6 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

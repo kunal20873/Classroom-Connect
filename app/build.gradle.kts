@@ -1,10 +1,15 @@
+import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
-
+    alias(libs.plugins.kotlin.serialization)
 }
 
+
+val localProperties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
 android {
     namespace = "com.example.classroomconnect"
     compileSdk = 36
@@ -17,9 +22,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "GEMINI_API_KEY",
+            "\"${localProperties.getProperty("GEMINI_API_KEY") ?: ""}\""
+        )
     }
     buildFeatures {
-        viewBinding=true
+        viewBinding = true
+        buildConfig = true
     }
     buildTypes {
         release {
@@ -51,12 +62,16 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.supabase.storage)
     implementation(libs.supabase.postgrest)
-    implementation(libs.ktor.client.android)
     implementation(libs.supabase.auth)
     implementation(libs.supabase.realtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.kotlinx.serialization.json)
 
 }

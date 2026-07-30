@@ -5,15 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="#F2F6FF">
+    android:background="?android:attr/windowBackground">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/topEmptyCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="15dp"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="24dp"
         app:cardElevation="6dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,17 +37,19 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/loginCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintTop_toBottomOf="@id/topEmptyCard"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -117,7 +122,7 @@
 
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/tvRegister"

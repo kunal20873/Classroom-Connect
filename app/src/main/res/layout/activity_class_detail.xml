@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F6FF"
+    android:background="?android:attr/windowBackground"
     android:fitsSystemWindows="true"
     tools:context=".ClassDetailActivity">
 
@@ -19,15 +19,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Class Information Card -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardClassInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginTop="20dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="24dp"
-        app:cardElevation="6dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -69,19 +71,21 @@
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Compact Material Upload Card -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardAddMaterial"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        android:visibility="visible"
-        app:cardBackgroundColor="?attr/colorSurface"
+        android:visibility="gone"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="20dp"
-        app:cardElevation="3dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cardClassInfo">
@@ -134,7 +138,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Choose PDF"
+                    android:text="Choose File"
                     android:textAllCaps="false"
                     android:textColor="#5A6CFF"
                     android:textStyle="bold"
@@ -166,20 +170,84 @@
                 app:cornerRadius="12dp"/>
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/MATERIALNAME"
-        android:layout_width="wrap_content"
+    <!-- Materials Title and Search Row -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/materialTitleRow"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="20dp"
-        android:text="Class Materials"
-        android:textColor="#1E293B"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardAddMaterial" />
+        android:paddingHorizontal="20dp"
+        app:layout_constraintTop_toBottomOf="@id/cardAddMaterial">
+
+        <TextView
+            android:id="@+id/MATERIALNAME"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Class Materials"
+            android:textSize="18sp"
+            android:textColor="?attr/colorOnSurface"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/btnSearch"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Search"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="?attr/colorOnSurface"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Search Card (In-place) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchCard"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="?android:attr/windowBackground"
+            app:cardCornerRadius="22dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp">
+
+                <EditText
+                    android:id="@+id/etSearch"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="Search material..."
+                    android:inputType="text"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnCloseSearch"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@android:drawable/ic_menu_close_clear_cancel"
+                    app:tint="#757575" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcViewMaterial"
@@ -191,7 +259,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnDoubt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/MATERIALNAME" />
+        app:layout_constraintTop_toBottomOf="@id/materialTitleRow" />
 
     <TextView
         android:id="@+id/noMaterial"
@@ -203,7 +271,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnDoubt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/MATERIALNAME" />
+        app:layout_constraintTop_toBottomOf="@id/materialTitleRow" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnDoubt"

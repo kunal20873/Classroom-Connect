@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:clickable="true"
     android:focusable="true"
-    android:background="#F2F6FF"
+    android:background="?android:attr/windowBackground"
     android:layout_gravity="start">
     <!-- Modern Header -->
     <LinearLayout
@@ -60,21 +60,50 @@
             android:text="Dashboard"
             android:textAllCaps="false"
             android:gravity="start|center_vertical"
-            android:textColor="#1E293B"
+            android:textColor="?attr/colorOnSurface"
             app:drawableStartCompat="@android:drawable/ic_menu_today"
             app:drawableTint="#5A6CFF"
             android:drawablePadding="16dp"
             android:padding="12dp" />
 
         <TextView
+            android:id="@+id/btnMyLibrary"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/my_library"
+            android:textAllCaps="false"
+            android:gravity="start|center_vertical"
+            android:textColor="?attr/colorOnSurface"
+            app:drawableStartCompat="@android:drawable/ic_menu_agenda"
+            app:drawableTint="#5A6CFF"
+            android:drawablePadding="16dp"
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/btnMyProfile"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="My Profile"
             android:textAllCaps="false"
             android:gravity="start|center_vertical"
-            android:textColor="#1E293B"
+            android:textColor="?attr/colorOnSurface"
             app:drawableStartCompat="@android:drawable/ic_menu_myplaces"
+            app:drawableTint="#5A6CFF"
+            android:drawablePadding="16dp"
+            android:padding="12dp" />
+
+        <TextView
+            android:id="@+id/btnQuizHistory"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Quiz History"
+            android:textAllCaps="false"
+            android:gravity="start|center_vertical"
+            android:textColor="?attr/colorOnSurface"
+            app:drawableStartCompat="@android:drawable/ic_menu_recent_history"
             app:drawableTint="#5A6CFF"
             android:drawablePadding="16dp"
             android:padding="12dp" />
@@ -86,7 +115,7 @@
             android:text="Settings"
             android:textAllCaps="false"
             android:gravity="start|center_vertical"
-            android:textColor="#1E293B"
+            android:textColor="?attr/colorOnSurface"
             app:drawableStartCompat="@android:drawable/ic_menu_preferences"
             app:drawableTint="#5A6CFF"
             android:drawablePadding="16dp"

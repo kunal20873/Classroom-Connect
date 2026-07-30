@@ -1,72 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="5dp"
-    app:cardCornerRadius="20dp"
-    app:cardBackgroundColor="?attr/colorSurface"
-    android:layout_margin="9dp"
-    android:id="@+id/cardItem"
-    >
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="?android:attr/windowBackground"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/colorOutlineVariant">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_margin="10dp"
-
-        >
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/tvEach1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20dp"
-            android:layout_margin="10dp"
-
-            android:text="TextView" />
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Material Name"
+            android:textColor="?attr/colorOnSurface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvEach2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:clickable="true"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="4dp"
             android:autoLink="web"
-            android:layout_margin="10dp"
-            android:textSize="16sp"
-            android:text="link" />
+            android:clickable="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="filename.pdf"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="end"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginBottom="12dp"
-            android:gravity="end">
+            android:paddingHorizontal="8dp">
 
             <TextView
                 android:id="@+id/btnQuiz"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"
                 android:text="Practice Quiz"
                 android:textColor="#4CAF50"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:padding="4dp" />
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Open PDF"
+                android:background="?attr/selectableItemBackground"
+                android:padding="8dp"
+                android:text="Open File"
                 android:textColor="#5A6CFF"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                android:padding="4dp" />
+                android:textStyle="bold" />
 
         </LinearLayout>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

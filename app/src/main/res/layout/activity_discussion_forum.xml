@@ -6,27 +6,27 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F6FF"
+    android:background="?android:attr/windowBackground"
     android:fitsSystemWindows="true"
     tools:context=".DiscussionForum">
-
-    <!-- Modern Header -->
     <View
         android:id="@+id/headerBg"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="90dp"
         android:background="#5A6CFF"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/ClassInfo"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginTop="20dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="20dp"
-        app:cardElevation="6dp"
+        app:cardElevation="4dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -74,7 +74,7 @@
                     android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <TextView
         android:id="@+id/doubtFor"
@@ -83,7 +83,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:text="Discussion Forum"
-        android:textColor="#1E293B"
+        android:textColor="?attr/colorOnSurface"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -102,14 +102,16 @@
         app:layout_constraintTop_toBottomOf="@id/doubtFor" />
 
     <!-- Modern Pill Input Bar -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="12dp"
-        app:cardBackgroundColor="?attr/colorSurface"
+        app:cardBackgroundColor="?android:attr/windowBackground"
         app:cardCornerRadius="30dp"
         app:cardElevation="4dp"
+        app:strokeWidth="1dp"
+        app:strokeColor="?attr/colorOutlineVariant"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
@@ -152,6 +154,6 @@
                 app:iconTint="#FFFFFF" />
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

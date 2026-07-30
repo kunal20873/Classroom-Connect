@@ -14,38 +14,68 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.ClassroomConnect">
-        <activity
-            android:name=".SplashActivity"
-            android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-        </activity>
-            />
         <activity
-            android:name=".DiscussionForum"
+            android:name=".ui.auth.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.auth.SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.library.PersonalLibraryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.classroom.DiscussionForum"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
-            android:name=".ClassDetailActivity"
+            android:name=".ui.classroom.ClassDetailActivity"
             android:exported="false" />
+
         <activity
-            android:name=".TeacherActivity"
+            android:name=".ui.teacher.TeacherActivity"
             android:exported="false" />
+
         <activity
-            android:name=".StudentActivity"
+            android:name=".ui.student.StudentActivity"
             android:exported="false" />
+
         <activity
-            android:name=".SignUp"
+            android:name=".ui.auth.SignUp"
             android:exported="false" />
+
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.auth.MainActivity"
             android:exported="false" />
+
         <activity
-            android:name=".QuizActivity"
+            android:name=".ui.quiz.QuizActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.quiz.QuizHistoryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.quiz.ReviewQuizActivity"
+            android:exported="false" />
+
+        <service
+            android:name=".ui.notifications.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

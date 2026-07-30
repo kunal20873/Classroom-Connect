@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Classroom Connect</string>
+    <string name="welcome_placeholder">Welcome %1$s</string>
+    <string name="created_by_placeholder">Created by : %1$s</string>
+    <string name="class_id_placeholder">Class ID : %1$s</string>
+    <string name="topic_placeholder">Topic : %1$s</string>
+    <string name="my_library">My Library</string>
 </resources>
