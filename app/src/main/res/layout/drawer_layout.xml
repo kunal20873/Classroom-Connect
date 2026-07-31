@@ -108,18 +108,7 @@
             android:drawablePadding="16dp"
             android:padding="12dp" />
 
-        <TextView
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Settings"
-            android:textAllCaps="false"
-            android:gravity="start|center_vertical"
-            android:textColor="?attr/colorOnSurface"
-            app:drawableStartCompat="@android:drawable/ic_menu_preferences"
-            app:drawableTint="#5A6CFF"
-            android:drawablePadding="16dp"
-            android:padding="12dp" />
+
 
     </LinearLayout>
 
