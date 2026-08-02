@@ -151,6 +151,16 @@ class PersonalLibraryActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val file = uriToFile(fileUri!!)
+                
+                if (file.length() > 50 * 1024 * 1024) {
+                    Toast.makeText(this@PersonalLibraryActivity, "file must be less than 50 mb", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Show progress bar and disable button
+                binding.uploadProgressBarPersonal.visibility = View.VISIBLE
+                binding.btnUploadPersonal.isEnabled = false
+
                 val extension = file.extension
                 val fileName = "${System.currentTimeMillis()}.$extension"
                 
@@ -181,10 +191,23 @@ class PersonalLibraryActivity : AppCompatActivity() {
                         binding.etPersonalTopic.text?.clear()
                         binding.txtSelectedFilePersonal.text = "No file selected"
                         fileUri = null
+
+                        // Hide progress and re-enable button
+                        binding.uploadProgressBarPersonal.visibility = View.GONE
+                        binding.btnUploadPersonal.isEnabled = true
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this@PersonalLibraryActivity, "Failed to save to library", Toast.LENGTH_SHORT).show()
+                        // Hide progress and re-enable button
+                        binding.uploadProgressBarPersonal.visibility = View.GONE
+                        binding.btnUploadPersonal.isEnabled = true
                     }
 
             } catch (e: Exception) {
                 Toast.makeText(this@PersonalLibraryActivity, "Upload failed: ${e.message}", Toast.LENGTH_LONG).show()
+                // Hide progress and re-enable button
+                binding.uploadProgressBarPersonal.visibility = View.GONE
+                binding.btnUploadPersonal.isEnabled = true
             }
         }
     }

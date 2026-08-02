@@ -248,6 +248,16 @@ class ClassDetailActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val file = uriToFile(fileUri!!)
+                
+                if (file.length() > 50 * 1024 * 1024) {
+                    Toast.makeText(this@ClassDetailActivity, "file must be less than 50 mb", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                // Show progress bar and disable button
+                binding.uploadProgressBar.visibility = View.VISIBLE
+                binding.btnAddMaterial.isEnabled = false
+
                 val extension = file.extension
                 val fileName = "${System.currentTimeMillis()}.$extension"
                 withContext(Dispatchers.IO) {
@@ -284,10 +294,23 @@ class ClassDetailActivity : AppCompatActivity() {
                         binding.topicMaterial.text?.clear()
                         binding.txtSelectedFile.text = ""
                         fileUri = null
+                        
+                        // Hide progress and re-enable button
+                        binding.uploadProgressBar.visibility = View.GONE
+                        binding.btnAddMaterial.isEnabled = true
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this@ClassDetailActivity, "Failed to save material", Toast.LENGTH_SHORT).show()
+                        // Hide progress and re-enable button on failure
+                        binding.uploadProgressBar.visibility = View.GONE
+                        binding.btnAddMaterial.isEnabled = true
                     }
 
             } catch (e: Exception) {
                 Toast.makeText(this@ClassDetailActivity, e.message, Toast.LENGTH_LONG).show()
+                // Hide progress and re-enable button on error
+                binding.uploadProgressBar.visibility = View.GONE
+                binding.btnAddMaterial.isEnabled = true
             }
         }
     }
